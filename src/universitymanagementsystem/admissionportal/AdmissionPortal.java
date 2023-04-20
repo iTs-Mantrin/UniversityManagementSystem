@@ -1,6 +1,7 @@
 
 package universitymanagementsystem.admissionportal;
 
+import universitymanagementsystem.home.JDBCConnection;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,7 +18,7 @@ public class AdmissionPortal extends JFrame implements ActionListener{
     JButton forgetPassword, forgetUsername, newRegistration , login;
     
     
-    AdmissionPortal(){
+    public AdmissionPortal(){
         
         ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("icon/Logo.png"));
         Image img2 = img.getImage().getScaledInstance(200, 100,Image.SCALE_DEFAULT);
@@ -117,6 +118,7 @@ public class AdmissionPortal extends JFrame implements ActionListener{
         setSize(400,600);
         getContentPane().setBackground(Color.WHITE);
         setLocation(350,50);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         
     }
@@ -142,16 +144,16 @@ public class AdmissionPortal extends JFrame implements ActionListener{
                         passwordAlert.setText("Password cannot be blank");
                     }
                     else{
-                        String query = "SELECT* FROM studentLogin WHERE username = '"+user+"' && password = '"+pass+"'";
+                        String query = "SELECT* FROM admissionLogin WHERE UserName = '"+user+"' && Password = '"+pass+"'";
                         
                 try{
                   
                     JDBCConnection con = new JDBCConnection();
                     ResultSet rs = con.stmt.executeQuery(query);
                     if(rs.next()){
-                        JOptionPane.showMessageDialog(null, "Login Successfully");
+                        //JOptionPane.showMessageDialog(null, "Login Successfully");
                         setVisible(false);
-                        //new AdmissionPortalLogin().setVisible(true);
+                        new AdmissionPersonalDetails(user).setVisible(true);
 
                     }
                     else{

@@ -16,7 +16,7 @@ public class CounselorLogin extends JFrame implements ActionListener{
     JButton forgetPassword, newRegistration, login;
     
     
-    CounselorLogin(){
+    public CounselorLogin(){
         
         ImageIcon img = new ImageIcon(ClassLoader.getSystemResource("icon/Logo.png"));
         Image img2 = img.getImage().getScaledInstance(200, 100,Image.SCALE_DEFAULT);

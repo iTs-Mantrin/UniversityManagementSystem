@@ -4,14 +4,20 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import com.toedter.calendar.*;
+import universitymanagementsystem.admissionportal.*;
 import universitymanagementsystem.counselorportal.*;
+import universitymanagementsystem.adminportal.*;
+import universitymanagementsystem.alumniportal.*;
+import java.sql.*;
+
+
 /**
  *
  * @author Manish Kumar
  */
 public class Home extends JFrame implements ActionListener{
     JMenu home,portal, aboutUniversity,registerOnline,studentSupport,other;
-    JMenuItem counselPortal,adminPortal, aluminiPortal;
+    JMenuItem counselPortal,adminPortal, alumniPortal;
     JMenuItem aboutUs, profile, schoolOfStudies, divisions, gallery;
     JMenuItem admission, reRegistration, termEndExam, reEvaluation, entranceExam, convocation;
     JMenuItem studentZone, studentGrievances, downloads, results;
@@ -34,6 +40,7 @@ public class Home extends JFrame implements ActionListener{
         
         home = new JMenu("Home");
         home.setForeground(Color.WHITE);
+        home.addActionListener(this);
         home.setFont(new Font("SAN_SERIF",Font.BOLD,25));
 
         
@@ -42,13 +49,16 @@ public class Home extends JFrame implements ActionListener{
         portal.setFont(new Font("SAN_SERIF",Font.BOLD,15));
 
         counselPortal = new JMenuItem("Counselor Portal");
+        counselPortal.addActionListener(this);
         portal.add(counselPortal);
         
         adminPortal = new JMenuItem("Admin Portal");
+        adminPortal.addActionListener(this);
         portal.add(adminPortal);
         
-        aluminiPortal = new JMenuItem("Alumni Portal");
-        portal.add(aluminiPortal);
+        alumniPortal = new JMenuItem("Alumni Portal");
+        alumniPortal.addActionListener(this);
+        portal.add(alumniPortal);
 
                 
         aboutUniversity = new JMenu("About University");
@@ -56,18 +66,23 @@ public class Home extends JFrame implements ActionListener{
         aboutUniversity.setFont(new Font("SAN_SERIF",Font.BOLD,15));
         
         aboutUs = new JMenuItem("About Us");
+        aboutUs.addActionListener(this);
         aboutUniversity.add(aboutUs);
         
         profile = new JMenuItem("Profile");
+        profile.addActionListener(this);
         aboutUniversity.add(profile);
         
         schoolOfStudies = new JMenuItem("School Of Studies");
+        schoolOfStudies.addActionListener(this);
         aboutUniversity.add(schoolOfStudies);
         
         divisions = new JMenuItem("Divisions");
+        divisions.addActionListener(this);
         aboutUniversity.add(divisions);
         
         gallery = new JMenuItem("Gallery");
+        gallery.addActionListener(this);
         aboutUniversity.add(gallery);
         
         registerOnline = new JMenu("Register Online");
@@ -79,18 +94,23 @@ public class Home extends JFrame implements ActionListener{
         registerOnline.add(admission);
         
         reRegistration = new JMenuItem("Re-Registration");
+        reRegistration.addActionListener(this);
         registerOnline.add(reRegistration);
         
         termEndExam = new JMenuItem("Term End Exam");
+        termEndExam.addActionListener(this);
         registerOnline.add(termEndExam);
         
         reEvaluation = new JMenuItem("Re-Evaluation");
+        reEvaluation.addActionListener(this);
         registerOnline.add(reEvaluation);
         
         entranceExam = new JMenuItem("Entrance Exam");
+        entranceExam.addActionListener(this);
         registerOnline.add(entranceExam);
         
         convocation = new JMenuItem("Convocation");
+        convocation.addActionListener(this);
         registerOnline.add(convocation);
         
         studentSupport = new JMenu("Student Support");
@@ -98,15 +118,19 @@ public class Home extends JFrame implements ActionListener{
         studentSupport.setFont(new Font("SAN_SERIF",Font.BOLD,15));
         
         studentZone = new JMenuItem("Student Zone");
+        studentZone.addActionListener(this);
         studentSupport.add(studentZone);
         
         studentGrievances = new JMenuItem("Student Grievances");
+        studentGrievances.addActionListener(this);
         studentSupport.add(studentGrievances);
         
         downloads = new JMenuItem("Downloads");
+        downloads.addActionListener(this);
         studentSupport.add(downloads);
                 
         results = new JMenuItem("Results");
+        results.addActionListener(this);
         studentSupport.add(results);
         
         
@@ -278,17 +302,35 @@ public class Home extends JFrame implements ActionListener{
         programmeLabel.setBounds(10, 150, 180, 40);
         programmeLabel.setFont(new Font("SAN_SERIF",Font.BOLD,15));
         loginPanel.add(programmeLabel);
-               
-        String programmeArr[]={"Select Programme","BCA","B.Tech","MCA","M.Tech"};
-        programme = new JComboBox(programmeArr);
+        
+       
+
+        //String programmeArr[]={"Select Programme","BCA","B.Tech","MCA","M.Tech"};
+        programme = new JComboBox();
         programme.setBounds(190, 150, 200, 40);
+        programme.setBackground(Color.WHITE);
         programme.setFont(new Font("SAN_SERIF",Font.BOLD,15));
         loginPanel.add(programme);
-        
+          
+         try{
+            String query = "SELECT DISTINCT programme FROM programme";
+            JDBCConnection con = new JDBCConnection();
+            ResultSet rs = con.stmt.executeQuery(query);
+            programme.addItem("Select");
+            while(rs.next()){
+                String programmes= rs.getString("programme");
+                programme.addItem(programmes);
+            }
+        }
+        catch(Exception e){System.out.println(e);}
+         
+         
+         
         dateOfBirthLabel = new JLabel("Date Of Birth:");
         dateOfBirthLabel.setBounds(10, 200, 180, 40);
         dateOfBirthLabel.setFont(new Font("SAN_SERIF",Font.BOLD,15));
         loginPanel.add(dateOfBirthLabel);
+        
         
         dateOfBirth = new JDateChooser();
         dateOfBirth.setBounds(190, 200, 200, 40);
@@ -316,7 +358,6 @@ public class Home extends JFrame implements ActionListener{
         setLayout(null);
         setVisible(true);
         setLocation(0,0);
-        
     }
     
     
@@ -331,14 +372,54 @@ public class Home extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        try{
-            if(ae.getSource() == admission){
-              //new CounselorLogin().setVisible(true);
-              
+        if(ae.getSource() == login){
+            String _enrollment = enrollment.getText();
+            String _programme = (String) programme.getSelectedItem();
+            String _dateOfBirth = ((JTextField) dateOfBirth.getDateEditor().getUiComponent()).getText();
+            if(_enrollment.equals("")||_programme.equalsIgnoreCase("Select")||_dateOfBirth.equals("")){
+                if(_enrollment.equals("")){
+                    JOptionPane.showMessageDialog(null,"Please enter the enrollment number");
+                }
+                else if(_programme.equalsIgnoreCase("Select")){
+                    JOptionPane.showMessageDialog(null,"Please select the programme");
+                }
+                else if(_dateOfBirth.equals("")){
+                    JOptionPane.showMessageDialog(null,"Please enter Date of Birth");
+                }
             }
-            
+            else{
+                
+                String query = "SELECT* FROM studentLogin WHERE EnrollmentNumber = '"+_enrollment+"' && Programme ='"+_programme+"' && dateOfBirth = '"+_dateOfBirth+"'";
+                try{
+                    JDBCConnection c = new JDBCConnection();
+                    ResultSet rs = c.stmt.executeQuery(query);
+                    setVisible(false);
+                    new StudentLogin("").setVisible(true);
+                }
+                catch(Exception e){System.out.println(e);}
+            }
+        }    
+        
+        try{
+            if(ae.getSource() == home){
+                setVisible(false);
+                new Home().setVisible(true);
+            }
+            else if(ae.getSource() == admission){
+            new AdmissionPortal().setVisible(true);
+            }
+            else if(ae.getSource() == counselPortal){
+            new CounselorLogin().setVisible(true);    
+            }
+            else if(ae.getSource() == adminPortal){
+            new AdminLogin().setVisible(true);    
+            }
+            else if(ae.getSource() == alumniPortal){
+            new AlumniLogin().setVisible(true);    
+            }
         }
         catch(Exception e){System.out.println(e);}
     }
     
 }
+

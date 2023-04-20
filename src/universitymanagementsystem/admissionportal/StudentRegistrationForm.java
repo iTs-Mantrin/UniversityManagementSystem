@@ -1,5 +1,6 @@
 package universitymanagementsystem.admissionportal;
 
+import universitymanagementsystem.home.JDBCConnection;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -170,6 +171,7 @@ public class StudentRegistrationForm extends JFrame implements ActionListener{
         setVisible(true);
         setSize(800,650);
         setLocation(220,20);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public static void main(String args[]){
@@ -223,12 +225,15 @@ public class StudentRegistrationForm extends JFrame implements ActionListener{
                 } 
             }
             else{
-                String query = "INSERT INTO studentregistration VALUES('"+username+"','"+fullname+"','"+remail+"','"+repass+"','"+remnumber+"')";
-                String query2 ="INSERT INTO studentLogin VALUES('"+username+"','"+repass+"')";
+                
+                String query = "INSERT INTO studentRegistration (UserName, FullName, Email, Password, PhoneNumber) VALUES('"+username+"','"+fullname+"','"+remail+"','"+repass+"','"+remnumber+"')";
+                String query2 ="INSERT INTO admissionLogin (UserName,Password) VALUES('"+username+"','"+repass+"')";
                 try{
                     JDBCConnection con = new JDBCConnection();
                     con.stmt.executeUpdate(query);
                     con.stmt.executeUpdate(query2);
+                    setVisible(false);
+                    new AdmissionPortal().setVisible(true);
                 }
             catch(Exception e){System.out.println(e);}
             }

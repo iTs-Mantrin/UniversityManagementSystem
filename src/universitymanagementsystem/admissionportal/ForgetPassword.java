@@ -1,5 +1,6 @@
 package universitymanagementsystem.admissionportal;
 
+import universitymanagementsystem.home.JDBCConnection;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
@@ -86,6 +87,7 @@ public class ForgetPassword extends JFrame implements ActionListener{
         setSize(350,400);
         getContentPane().setBackground(Color.WHITE);
         setLocation(350,50);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         
     }
